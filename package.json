@@ -1,0 +1,24 @@
+{
+  "name": "xmind-merge",
+  "version": "0.1.0",
+  "description": "Merges Xmind Files",
+  "main": "xmind-merge.js",
+  "bin": "xmind-merge.js",
+  "scripts": {
+    "pkg": "pkg --out-path build/ ."
+  },
+  "author": "Matt Gibbs <matgibbs@cisco.com>",
+  "license": "Cisco Sample Code License",
+  "pkg": {
+    "assets": [
+      "template/*"
+    ]
+  },
+  "dependencies": {
+    "jszip": "^3.2.2",
+    "lodash": "^4.17.15",
+    "tmp": "^0.1.0",
+    "uuid": "^3.4.0",
+    "yargs": "^15.1.0"
+  }
+}
