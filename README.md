@@ -19,9 +19,9 @@ Merge all the `.xmind` files in `~/example/` into `~/example.xmind` in alphabeti
 node xmind-merge.js --src_dir ~/example/ --dst_xmind ~/example.xmind --sort_topics
 ```
 
-Merge all the `.xmind` files in `~/example/` into `~/example.xmind` in alphabetical order based on the resulting topic list, performing a deeper merge at the first level of topics, and visually folding the first level of topics:
+Merge all the `.xmind` files in `~/example/` into `~/example.xmind` in alphabetical order based on the resulting topic list, performing a deeper merge at the first level of topics, adding source attribution, and visually folding the first level of topics:
 ```bash
-node xmind-merge.js --src_dir ~/example/ --dst_xmind ~/example.xmind --sort_topics --deeper --fold
+node xmind-merge.js --src_dir ~/example/ --dst_xmind ~/example.xmind --sort_topics --deeper --src_attr --fold
 ```
 
 ## Known Limitations
@@ -30,7 +30,7 @@ The public XMind file format [documentation](https://github.com/xmindltd/xmind/w
 
 Only the first sheet in each source mindmap workbook is merged. Additional sheets are ignored.
 
-There are likely features in the various versions of XMind that haven't been tested or enabled with this utility (e.g. markers, file encryption, multiple sheets in a workbook, etc.)
+There are likely features in the various versions of XMind that haven't been tested or enabled with this utility (e.g. markers, summaries, file encryption, multiple sheets in a workbook, etc.)
 
 ## Motivation
 

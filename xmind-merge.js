@@ -35,6 +35,8 @@ var args = require('yargs')
     .describe('debug', 'Run in debug mode')
     .boolean('fold')
     .describe('fold', 'Fold the merged XMind tree')
+    .boolean('src_attr')
+    .describe('src_attr', 'Add a source file attribution note to each top-level topic in the merged tree, or to every topic if a deeper merge is performed')
     .boolean('deeper')
     .describe('deeper', 'Perform a deeper merge, consolidating matching top-level topics')
     .boolean('sort_topics')
@@ -55,6 +57,7 @@ const TEMPLATE_DIR = path.join(__dirname, '/template/');
 const RESOURCES_DIR = 'resources/';
 const TEMP_RESOURCES_DIR = tmp.dirSync().name;
 const ROOT_TOPIC = 'rootTopic';
+const SRC_ATTR_TAG = 'Merge-Source: ';
 
 // Set up processing for exit signals
 process.on('SIGINT', cleanUp);
@@ -344,6 +347,11 @@ function merge_content(src_json, src_xmind, src_zip) {
       // Add the attached and detached child topics
       var topic_count = 0;
       if(lod.has(clean_obj.children, 'attached') && lod.isArray(clean_obj.children.attached)) {
+        // Add source attribution if necessary
+        if(args.src_attr) {
+          add_src_attr(clean_obj.children.attached, src_xmind);
+        }
+
         dst_xmind[0][ROOT_TOPIC].children.attached = lod.concat(dst_xmind[0][ROOT_TOPIC].children.attached, clean_obj.children.attached);
         topic_count += clean_obj.children.attached.length;
       }
@@ -353,6 +361,11 @@ function merge_content(src_json, src_xmind, src_zip) {
       }
 
       if(lod.has(clean_obj.children, 'detached') && lod.isArray(clean_obj.children.detached)) {
+        // Add source attribution if necessary
+        if(args.src_attr) {
+          add_src_attr(clean_obj.children.detached, src_xmind);
+        }
+
         dst_xmind[0][ROOT_TOPIC].children.detached = lod.concat(dst_xmind[0][ROOT_TOPIC].children.detached, clean_obj.children.detached);
         topic_count += clean_obj.children.detached.length;
       }
@@ -402,6 +415,78 @@ function fold_xmind() {
 }
 
 
+// Add source file attribution notes based on the filename passed in to each
+// topic and its children (recursively if a deep merge is configured so that
+// no context is lost)
+function add_src_attr(topics, src_filename) {
+  var note = SRC_ATTR_TAG + src_filename;
+
+  topics.forEach((topic, index) => {
+    // Recurse if a deeper merge will be performed and the topic has children
+    if(args.deeper && lod.has(topic, 'children')) {
+      if(lod.has(topic.children, 'attached')) {
+        add_src_attr(topic.children.attached, src_filename);
+      }
+
+      if(lod.has(topic.children, 'detached')) {
+        add_src_attr(topic.children.detached, src_filename);
+      }
+    }
+
+    // Check if the topic already has a note attached
+    if(lod.has(topic, 'notes')) {
+      try {
+        // The following makes some assumptions about the validity of the
+        // existing note formatting, so put it in a try block to be safe
+        topic.notes.plain.content = topic.notes.plain.content + '\n' + note;
+        topic.notes.ops.ops.push({
+          "insert": note + '\n'
+        });
+        topic.notes.html.content.paragraphs.push({
+          "spans": [
+            {
+              "text": note
+            }
+          ]
+        });
+      }
+      catch(error) {
+        // Something went wrong adding to the existing note, save the issue to
+        // report later
+        src_errors.push('Unable to add to existing note in ' + src_filename + ': ' + error.message);
+      }
+    }
+    else {
+      // Add a new note
+      topic.notes = {
+        "plain": {
+          "content": note
+        },
+        "ops": {
+          "ops": [
+            {
+              "insert": note + '\n'
+            }
+          ]
+        },
+        "html": {
+          "content": {
+            "paragraphs": [
+              {
+                "spans": [
+                  {
+                    "text": note
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      };
+    }
+  });
+}
+
 // Consolidate matching top-level topics in the dst_xmind object, returning
 // the number of consolidations
 // Note that this is similar to the XMind Pro merge capability, but doesn't
@@ -416,6 +501,29 @@ function consolidate_xmind() {
     if(match !== -1) {
       // Item topic matches, begin consolidation
       count++;
+
+      // Merge any top-level notes so they aren't lost through consolidation
+      if(lod.has(item, 'notes')) {
+        if(lod.has(new_attached[match], 'notes')) {
+          // Existing notes to merge with
+          try {
+            // The following makes some assumptions about the validity of the
+            // note formatting, so put it in a try block to be safe
+            new_attached[match].notes.plain.content = new_attached[match].notes.plain.content + '\n' + item.notes.plain.content;
+            new_attached[match].notes.ops.ops = lod.concat(new_attached[match].notes.ops.ops, item.notes.ops.ops);
+            new_attached[match].notes.html.content.paragraphs = lod.concat(new_attached[match].notes.html.content.paragraphs, item.notes.html.content.paragraphs);
+          }
+          catch(error) {
+            // Something went wrong merging into the existing note
+            console.log('Warning: Unable to merge notes within top-level topic \'' + new_attached[match].title + '\', possible data loss');
+          }
+        }
+        else {
+          // No existing notes
+          new_attached[match].notes = item.notes;
+        }
+      }
+
       if(lod.has(item, 'children') && lod.has(item.children, 'attached') && lod.isArray(item.children.attached)) {
         // Item has children that need merging
         if(lod.has(new_attached[match], 'children') && lod.has(new_attached[match].children, 'attached') && lod.isArray(new_attached[match].children.attached)) {
