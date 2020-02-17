@@ -439,9 +439,6 @@ function add_src_attr(topics, src_filename) {
         // The following makes some assumptions about the validity of the
         // existing note formatting, so put it in a try block to be safe
         topic.notes.plain.content = topic.notes.plain.content + '\n' + note;
-        topic.notes.ops.ops.push({
-          "insert": note + '\n'
-        });
         topic.notes.html.content.paragraphs.push({
           "spans": [
             {
@@ -449,6 +446,11 @@ function add_src_attr(topics, src_filename) {
             }
           ]
         });
+        if(lod.has(topic.notes, 'ops')) {
+          topic.notes.ops.ops.push({
+            "insert": note + '\n'
+          });
+        }
       }
       catch(error) {
         // Something went wrong adding to the existing note, save the issue to
@@ -510,12 +512,19 @@ function consolidate_xmind() {
             // The following makes some assumptions about the validity of the
             // note formatting, so put it in a try block to be safe
             new_attached[match].notes.plain.content = new_attached[match].notes.plain.content + '\n' + item.notes.plain.content;
-            new_attached[match].notes.ops.ops = lod.concat(new_attached[match].notes.ops.ops, item.notes.ops.ops);
             new_attached[match].notes.html.content.paragraphs = lod.concat(new_attached[match].notes.html.content.paragraphs, item.notes.html.content.paragraphs);
+            if(lod.has(item.notes, 'ops')) {
+              if(lod.has(new_attached[match].notes, 'ops')) {
+                new_attached[match].notes.ops.ops = lod.concat(new_attached[match].notes.ops.ops, item.notes.ops.ops);
+              }
+              else {
+                new_attached[match].notes.ops = item.notes.ops;
+              }
+            }
           }
           catch(error) {
             // Something went wrong merging into the existing note
-            console.log('Warning: Unable to merge notes within top-level topic \'' + new_attached[match].title + '\', possible data loss');
+            console.log('Warning: Unable to merge notes within top-level topic \'' + new_attached[match].title + '\', possible note data loss: ' + error.message);
           }
         }
         else {
