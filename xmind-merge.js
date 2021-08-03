@@ -28,7 +28,7 @@ var JSZip = require('jszip');
 var lod = require('lodash');
 var tmp = require('tmp');
 var path = require('path');
-var uuidv4 = require('uuid/v4');
+const { v4: uuidv4 } = require('uuid');
 var args = require('yargs')
     .usage('Usage: $0 [options]')
     .boolean('debug')
