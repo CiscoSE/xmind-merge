@@ -540,7 +540,10 @@ function consolidate_xmind() {
           new_attached[match].children.attached = lod.concat(new_attached[match].children.attached, item.children.attached);
         }
         else {
-          // No existing children to concat with
+          // No existing children to concat with, add children property if necessary
+          if(!lod.has(new_attached[match], 'children')) {
+            new_attached[match].children = {};
+          }
           new_attached[match].children.attached = item.children.attached;
         }
       }
