@@ -1,6 +1,6 @@
 {
   "name": "xmind-merge",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Merges Xmind Files",
   "main": "xmind-merge.js",
   "bin": "xmind-merge.js",
@@ -15,10 +15,10 @@
     ]
   },
   "dependencies": {
-    "jszip": "^3.2.2",
+    "jszip": "^3.7.0",
     "lodash": "^4.17.21",
-    "tmp": "^0.1.0",
-    "uuid": "^3.4.0",
-    "yargs": "^15.1.0"
+    "tmp": "^0.2.1",
+    "uuid": "^8.3.2",
+    "yargs": "^17.0.1"
   }
 }
