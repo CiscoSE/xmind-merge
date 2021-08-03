@@ -34,7 +34,7 @@ There are likely features in the various versions of XMind that haven't been tes
 
 ## Motivation
 
-XMind 8 Pro includes a merge feature, but the newest application called just "XMind" (formerly "XMind Zen"), doesn't include this feature. This utility takes some of the functionality from the class XMind Pro merge feature and makes it more usable while being less error-prone when merging large numbers of mindmaps.
+XMind 8 Pro includes a merge feature, but the newest application called just "XMind" (formerly "XMind Zen"), doesn't include this feature. This utility takes some of the functionality from the classic XMind Pro merge feature and makes it more usable while being less error-prone when merging large numbers of mindmaps.
 
 ## Installation
 
