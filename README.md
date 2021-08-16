@@ -26,7 +26,7 @@ node xmind-merge.js --src_dir ~/example/ --dst_xmind ~/example.xmind --sort_topi
 
 ## Known Limitations
 
-The public XMind file format [documentation](https://github.com/xmindltd/xmind/wiki/XMindFileFormat) is quite outdated. XMind (formerly called "XMind Zen" to differentiate it as the new one) has since moved to a JSON file format, while XMind 8 Pro continues to use the original XML file format. This utility only works with modern XMind files based on the JSON file format. If you have an older version of mindmap file, simple open it in the latest version of XMind and choose "Save As", which will update the file to the JSON format. The utility should display helpful errors and warnings if you happen to try and merge a mindmap that isn't in the newer format.
+The public XMind file format [documentation](https://github.com/xmindltd/xmind/wiki/XMindFileFormat) is quite outdated. XMind (formerly called "XMind Zen" to differentiate it as the new one) has since moved to a JSON file format, while XMind 8 Pro continues to use the original XML file format. This utility only works with modern XMind files based on the JSON file format. If you have an older version of mindmap file, simply open it in the latest version of XMind and choose "Save As", which will update the file to the JSON format. The utility should display helpful errors and warnings if you happen to try and merge a mindmap that isn't in the newer format.
 
 Only the first sheet in each source mindmap workbook is merged. Additional sheets are ignored.
 
@@ -34,7 +34,7 @@ There are likely features in the various versions of XMind that haven't been tes
 
 ## Motivation
 
-XMind 8 Pro includes a merge feature, but the newest application called just "XMind" (formerly "XMind Zen"), doesn't include this feature. This utility takes some of the functionality from the classic XMind Pro merge feature and makes it more usable while being less error-prone when merging large numbers of mindmaps.
+XMind 8 Pro includes a merge feature, but the newest application called just "XMind" (formerly "XMind Zen") didn't originally include this feature. As of mid-2021 there is now a merge feature in XMind, however it is still fairly basic. This utility takes some of the functionality from the classic XMind Pro merge feature and makes it more usable while being less error-prone when merging large numbers of mindmaps.
 
 ## Installation
 
